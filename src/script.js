@@ -63,7 +63,7 @@ class TextScramble {
 // ——————————————————————————————————————————————————
 
 const phrases = [
-'test..,'
+'Wicenta Official'
 ];
 
 const el = document.querySelector('.text');
