@@ -63,12 +63,8 @@ class TextScramble {
 // ——————————————————————————————————————————————————
 
 const phrases = [
-'RageSawyer Loading..,',
-'RageSawyer Loaded!',
-'Project Loading..',
-'I am 21 years old. l live in Turkey.',
-'actual owner of rageturk.com ',
-'C#, Pawn, C++, Asmbly, HTML5/CSS'];
+'test..,'
+];
 
 const el = document.querySelector('.text');
 const fx = new TextScramble(el);
