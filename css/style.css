@@ -1,7 +1,7 @@
 /* 
-Theme Name: Bootstrap Theme 
-Author: WebThemez.com
-License: https://webthemez.com/license 
+Theme Name: Wicenta
+Author: Wicenta
+License: Wicenta 
 */
 /*--------------------------------------------------------------
 # General
@@ -123,7 +123,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 84px;
   transition: all 0.5s;
   z-index: 997;
-  background: #09040c;
+  background: #0e011a;
   box-shadow: 0px 6px 9px 0px rgba(0, 0, 0, 0.06);
 }
 
@@ -137,7 +137,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #header #logo h1 a {
-  color: #ff377b;
+  color: #09586b;
   line-height: 1;
   display: inline-block;
 }
@@ -190,7 +190,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #intro .intro-content h2 {
-  color: #ff377b;
+  color: #24030d;
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: 700;
@@ -202,7 +202,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 64px;
   text-transform: uppercase;
   font-family: 'Russo One', sans-serif;
-  background: -webkit-linear-gradient(#ffc08a, #E91E63);
+  background: -webkit-linear-gradient(#680202, #110107);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -230,8 +230,8 @@ h1, h2, h3, h4, h5, h6 {
 
 #intro .intro-content .btn-get-started {
   background: transparent;
-  border: 2px solid #ff377b;
-  color: #ff377b;
+  border: 2px solid #4b0404;
+  color: #ffffff;
 }
 
 #intro .intro-content .btn-get-started:hover {
@@ -775,7 +775,7 @@ padding: 25px;
 /* Our Portfolio Section
 --------------------------------*/
 #portfolio {
-  background: linear-gradient(45deg, #5b0072 54%, #3a0157 100%);
+  background: linear-gradient(45deg, #280045 54%, #280045 100%);
   padding: 90px 50px;
   color: #ffffff9c;
 }
