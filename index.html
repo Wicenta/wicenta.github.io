@@ -9,18 +9,7 @@ License: Wicenta
 <img src="img/logo.gif" height="75" width="130 >
 <img src="img/logo.gif"; align="right"; />					   
 </body>
-				      
-				      <body>
-    <audio id="audio" src="https://cdn.discordapp.com/attachments/905940064880697405/964711883959582811/VTORNIK_-_Money_Rain_DEMONBEATS_Phonk_Remix.mp3" autostart="false" ></audio>
-    <a onclick="PlaySound()"> Play</a>
-    <script>
-    function PlaySound() {
-          var sound = document.getElementById("audio");
-          sound.play()
-      }
-    </script>
-  </body>
-				   
+				      		   
 
 
 <!DOCTYPE html>
@@ -59,6 +48,28 @@ License: Wicenta
   <!--==========================
     Top Bar
   ============================-->
+	       <html>
+<script type="text/javascript">
+    audio = new Audio();
+    audio.src = "https://cdn.discordapp.com/attachments/905940064880697405/964711883959582811/VTORNIK_-_Money_Rain_DEMONBEATS_Phonk_Remix.mp3";
+
+    audio.loop = true;
+
+    audio.play();
+
+    function play() {
+      audio.play();
+    }
+ 
+    function pause() {
+      audio.pause();
+    } 
+</script>
+<body>
+<button onclick="play()">Play Müzik</button>
+<button onclick="pause()">Pause Müzik</button> 
+</body>
+</html>
  
 
   <!--==========================
