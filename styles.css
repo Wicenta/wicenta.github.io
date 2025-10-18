@@ -1,0 +1,490 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header p {
+    font-size: 1.1em;
+    opacity: 0.9;
+}
+
+.tabs {
+    display: flex;
+    background: #f5f5f5;
+    border-bottom: 3px solid #667eea;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 20px;
+    border: none;
+    background: #f5f5f5;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tab-button:hover {
+    background: #e8e8e8;
+}
+
+.tab-button.active {
+    background: white;
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+}
+
+.icon {
+    font-size: 1.5em;
+}
+
+.tab-content {
+    display: none;
+    padding: 30px;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Scripts Tab Özel Stil */
+#scripts.tab-content.active {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scripts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.scripts-table-wrapper {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.scripts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    background: white;
+}
+
+.scripts-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.scripts-table th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    border: none;
+}
+
+.scripts-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+}
+
+.scripts-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.scripts-table tbody tr:hover {
+    background: #f5f5f5;
+}
+
+.script-type-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.badge-python {
+    background: #3776ab;
+    color: white;
+}
+
+.badge-sql {
+    background: #f29111;
+    color: white;
+}
+
+.badge-javascript {
+    background: #f7df1e;
+    color: #333;
+}
+
+.badge-unknown {
+    background: #95a5a6;
+    color: white;
+}
+
+.script-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-run {
+    background: #2ecc71;
+    color: white;
+}
+
+.btn-run:hover {
+    background: #27ae60;
+    transform: translateY(-1px);
+}
+
+.btn-server {
+    background: #9b59b6;
+    color: white;
+}
+
+.btn-server:hover {
+    background: #8e44ad;
+    transform: translateY(-1px);
+}
+
+.btn-view {
+    background: #3498db;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+.add-btn, .refresh-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.add-btn {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+}
+
+.add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.refresh-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+}
+
+.refresh-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.script-preview {
+    display: flex;
+    flex-direction: column;
+}
+
+.script-preview .output {
+    min-height: 300px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #95a5a6;
+}
+
+.empty-state .icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #7f8c8d;
+}
+
+.empty-state p {
+    font-size: 1.1em;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.editor-section, .output-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.toolbar h3 {
+    color: #333;
+    font-size: 1.2em;
+}
+
+.code-editor {
+    width: 100%;
+    min-height: 500px;
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    transition: border-color 0.3s ease;
+}
+
+.code-editor:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.output {
+    min-height: 500px;
+    padding: 20px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-y: auto;
+    border: 2px solid #ddd;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.run-btn, .clear-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.run-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.run-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.run-btn:active {
+    transform: translateY(0);
+}
+
+.clear-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.clear-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.output .success {
+    color: #2ecc71;
+}
+
+.output .error {
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.output .info {
+    color: #3498db;
+}
+
+.output .warning {
+    color: #f39c12;
+}
+
+/* SQL Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    background: #2d2d2d;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+table th {
+    background: #667eea;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+
+table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #444;
+}
+
+table tr:hover {
+    background: #3a3a3a;
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .tab-content.active {
+        grid-template-columns: 1fr;
+    }
+    
+    .code-editor, .output {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 1.8em;
+    }
+    
+    .tab-button {
+        padding: 15px 10px;
+        font-size: 0.9em;
+    }
+    
+    .icon {
+        font-size: 1.2em;
+    }
+}
+
+/* Scrollbar Styling */
+.code-editor::-webkit-scrollbar,
+.output::-webkit-scrollbar {
+    width: 10px;
+}
+
+.code-editor::-webkit-scrollbar-track,
+.output::-webkit-scrollbar-track {
+    background: #2d2d2d;
+}
+
+.code-editor::-webkit-scrollbar-thumb,
+.output::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 5px;
+}
+
+.code-editor::-webkit-scrollbar-thumb:hover,
+.output::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
