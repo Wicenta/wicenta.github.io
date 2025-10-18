@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wicenta Mini Proje</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <script src="auth.js"></script>
+    <script>
+        // Sayfa yüklendiğinde auth kontrolü
+        const currentUser = requireAuth();
+        if (!currentUser) {
+            document.body.innerHTML = '<div style="text-align:center;padding:50px;">Yönlendiriliyor...</div>';
+        }
+    </script>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🚀 Wicenta Mini Proje</h1>
+                    <p>IRGATLIĞA SON!</p>
+                </div>
+                <div class="header-right">
+                    <span class="user-info" id="userInfo">👤 Yükleniyor...</span>
+                    <button onclick="logout()" class="logout-btn">🚪 Çıkış</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'scripts')">
+                <span class="icon">🏠</span> Ana Sayfa
+            </button>
+            <button class="tab-button" id="adminTabButton" onclick="openAdminTab(event)" style="display: none;">
+                <span class="icon">⚙️</span> Yönetici
+            </button>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="admin" class="tab-content">
+            <div class="admin-container">
+                <!-- Admin Authentication -->
+                <div id="adminAuth" class="admin-auth">
+                    <div class="admin-auth-box">
+                        <div class="admin-auth-header">
+                            <h2>🔐 Yönetici Paneli</h2>
+                            <p>Yönetici şifresini girin</p>
+                        </div>
+                        <form id="adminAuthForm" class="admin-auth-form">
+                            <input type="password" id="adminPassword" placeholder="Yönetici Şifresi" required>
+                            <button type="submit" class="admin-auth-btn">Giriş Yap</button>
+                            <div id="adminAuthError" class="admin-auth-error"></div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Admin Panel -->
+                <div id="adminPanel" class="admin-panel" style="display: none;">
+                    <div class="admin-header">
+                        <h2>⚙️ Yönetici Paneli</h2>
+                        <button onclick="lockAdminPanel()" class="lock-btn">🔒 Kilitle</button>
+                    </div>
+
+                    <div class="admin-content">
+                        <!-- Activity Log Section -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3>� Aktivite Logları</h3>
+                                <span class="card-badge info" id="logCount">0 Log</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="log-controls">
+                                    <button onclick="clearLogs()" class="danger-btn">🗑️ Logları Temizle</button>
+                                    <button onclick="downloadLogs()" class="download-btn">� İndir</button>
+                                    <button onclick="loadLogs()" class="refresh-btn">🔄 Yenile</button>
+                                </div>
+                                <div class="logs-container" id="logsContainer">
+                                    <div class="loading">Loglar yükleniyor...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Script Management Section -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3>📋 Script Yönetimi</h3>
+                                <span class="card-badge success" id="scriptCount">0 Script</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="admin-search">
+                                    <input type="text" id="adminSearch" placeholder="🔍 Script ara..." onkeyup="filterAdminScripts()">
+                                </div>
+                                <div class="admin-scripts-list" id="adminScriptsList">
+                                    <div class="loading">Yükleniyor...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Section -->
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <h3>📊 İstatistikler</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="stats-grid">
+                                    <div class="stat-box">
+                                        <div class="stat-icon">🐍</div>
+                                        <div class="stat-info">
+                                            <h4 id="pythonCount">0</h4>
+                                            <p>Python</p>
+                                        </div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-icon">🗄️</div>
+                                        <div class="stat-info">
+                                            <h4 id="sqlCount">0</h4>
+                                            <p>SQL</p>
+                                        </div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-icon">⚡</div>
+                                        <div class="stat-info">
+                                            <h4 id="jsCount">0</h4>
+                                            <p>JavaScript</p>
+                                        </div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-icon">💾</div>
+                                        <div class="stat-info">
+                                            <h4 id="totalSize">0 KB</h4>
+                                            <p>Toplam Boyut</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scripts Tab -->
+        <div id="scripts" class="tab-content">
+            <div class="scripts-container">
+                <!-- Python Kurulum Rehberi -->
+                <div class="setup-guide">
+                    <div class="guide-header">
+                        <h2>🐍 Python Kurulum Rehberi</h2>
+                        <span class="guide-badge">Gerekli</span>
+                    </div>
+                    <div class="guide-content">
+                        <div class="guide-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Python 3.14.0 İndir ve Kur</h4>
+                                <p>Python scriptlerini çalıştırmak için Python yüklü olmalıdır. Aşağıdaki butona tıklayarak otomatik indirme başlayacaktır.</p>
+                                <a href="https://www.python.org/ftp/python/3.14.0/python-3.14.0-amd64.exe" 
+                                   class="download-btn-guide" 
+                                   download
+                                   onclick="showPythonInstallGuide()">
+                                    💾 Python 3.14.0 İndir (Otomatik Başlar)
+                                </a>
+                                <div class="install-checklist">
+                                    <p><strong>⚠️ Kurulum Sırasında Mutlaka:</strong></p>
+                                    <ul>
+                                        <li>✅ "Add Python to PATH" seçeneğini işaretleyin</li>
+                                        <li>✅ "Install for all users" önerilir</li>
+                                        <li>✅ "Install Now" ile kurulumu tamamlayın</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Gerekli Kütüphaneleri Yükle</h4>
+                                <p>Python kurduktan sonra, aşağıdaki butona tıklayarak kütüphane kurulum dosyasını indirin:</p>
+                                <button onclick="downloadSetupBat()" class="install-btn-guide-big">
+                                    ⚡ Kütüphane Kurulum Dosyasını İndir (.bat)
+                                </button>
+                                <div class="guide-note" style="margin-top: 15px;">
+                                    <p><strong>📌 Önemli:</strong> İndirilen <code>wicenta-python-setup.bat</code> dosyasını çalıştırın. Bu dosya:</p>
+                                    <ul style="margin: 8px 0; padding-left: 20px;">
+                                        <li>Python kurulumunu kontrol eder</li>
+                                        <li>Gerekli tüm kütüphaneleri otomatik yükler (requests, pandas, numpy vb.)</li>
+                                        <li>Kurulum sonucu hakkında bilgi verir</li>
+                                    </ul>
+                                    <p style="margin-top: 10px;"><strong>⚠️ Herhangi bir hata alırsanız:</strong> Ekran görüntüsü alıp <strong>Doğukan Yeşilyurt</strong> ile iletişime geçin.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="guide-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Hazırsınız! 🎉</h4>
+                                <p>Kurulum tamamlandı! Artık aşağıdaki script listesinden istediğiniz Python scriptini çalıştırabilirsiniz.</p>
+                                <p class="guide-success">✅ Script çalıştırmak için listedeki herhangi bir scripti seçip "Çalıştır" butonuna basın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scriptler Bölümü -->
+                <div class="toolbar">
+                    <h3>📁 Mevcut Scriptler</h3>
+                    <div>
+                        <button onclick="refreshScripts()" class="refresh-btn">🔄 Yenile</button>
+                    </div>
+                </div>
+                
+                <div class="scripts-table-wrapper">
+                    <table class="scripts-table">
+                        <thead>
+                            <tr>
+                                <th>📄 Dosya Adı</th>
+                                <th>🏷️ Tip</th>
+                                <th>📏 Boyut</th>
+                                <th>🕐 Tarih</th>
+                                <th>⚙️ İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scriptsTableBody">
+                            <!-- Scripts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="script-preview">
+                    <div class="toolbar">
+                        <h3>� Script Çıktısı</h3>
+                        <button onclick="clearScriptOutput()" class="clear-btn">🗑️ Temizle</button>
+                    </div>
+                    <div id="scriptPreview" class="output">
+                        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                            <p style="font-size: 1.2em; margin-bottom: 10px;">Script çalıştırın...</p>
+                            <p style="font-size: 0.9em; opacity: 0.7;">Destek için <strong>Doğukan Yeşilyurt</strong> ile iletişime geçin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="admin.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

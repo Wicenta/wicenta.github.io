@@ -1,0 +1,58 @@
+# .gitignore - GitHub'a yüklenmeyecek dosyalar
+
+# ==========================================
+# BACKEND DOSYALARI (GitHub'da GÖZÜKMEYECEK)
+# ==========================================
+server.js
+package.json
+package-lock.json
+node_modules/
+
+# ==========================================
+# SCRIPTS KLASÖRÜ (Manuel eklenen scriptler)
+# ==========================================
+scripts/
+*.py
+*.sql
+*.js.bak
+
+# ==========================================
+# LOG DOSYALARI
+# ==========================================
+logs/
+*.log
+npm-debug.log*
+script-logs.txt
+access-logs.txt
+
+# ==========================================
+# Environment & Config
+# ==========================================
+.env
+.env.local
+config.json
+
+# ==========================================
+# OS Dosyaları
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# IDE Dosyaları
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# ==========================================
+# Geçici Dosyalar
+# ==========================================
+*.tmp
+*.temp
+temp/
+tmp/
+uploads/
