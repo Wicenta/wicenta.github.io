@@ -7,8 +7,7 @@ hamburger.addEventListener("click", () => {
 
 // Projem Var Popup JS
 const REFERANS_KODU = "6134-esra"; // <--- Referans kodunu buradan değiştirebilirsin
-const INDIRME_LINKI = "https://example.com/indir"; // <--- Yönlendirilecek linki buradan değiştirebilirsin
-const DASHBOARD_LINKI = "https://www.google.com"; // <--- Dashboard linkini buradan değiştirebilirsin
+const LINK = "https://www.google.com"; // <--- Yönlendirme yapılacak linki buradan değiştirebilirsin
 
 const projectBtn = document.getElementById('projectBtn');
 const projectModal = document.getElementById('projectModal');
@@ -41,7 +40,9 @@ if(projectBtn && projectModal) {
         projectModal.style.display = 'none';
         if(dashboardModal) {
           dashboardModal.style.display = 'flex';
-          setTimeout(function(){ window.location.assign(DASHBOARD_LINKI); }, 2500);
+          setTimeout(function(){ window.location.href = LINK; }, 2500);
+        } else {
+          window.location.href = LINK;
         }
       }, 900);
     } else {
