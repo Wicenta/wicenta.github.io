@@ -1,5 +1,6 @@
 html {
   line-height: 1.15;
+  scroll-behavior: smooth;
 }
 * {
   box-sizing: border-box;
@@ -9,6 +10,20 @@ body {
   font-family: 'Oxygen', sans-serif;
   position: relative;
   overflow-x: hidden;
+}
+// Custom scrollbar styling
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8e44ad 0%, #ff6600 100%);
+  border-radius: 6px;
+  &:hover {
+    background: linear-gradient(180deg, #6c3483 0%, #e65500 100%);
+  }
 }
 section {
   padding: 90px 15px;

@@ -1,9 +1,84 @@
+// ========================================
+// Hamburger Menu Animation
+// ========================================
 const hamburger = document.getElementsByClassName("hamburger")[0]
 const mobileNavs = document.getElementsByClassName("nav-links")[0]
 
 hamburger.addEventListener("click", () => {
   mobileNavs.classList.toggle("active")
 })
+
+// ========================================
+// Smooth Scroll for Navigation Links
+// ========================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const href = this.getAttribute('href');
+    if (href !== '#' && href.length > 1) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+        // Close mobile menu after clicking
+        if (mobileNavs.classList.contains('active')) {
+          mobileNavs.classList.remove('active');
+        }
+      }
+    }
+  });
+});
+
+// ========================================
+// Parallax Effect for Banner
+// ========================================
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  const banner = document.querySelector('.banner');
+
+  if (banner && scrolled < window.innerHeight) {
+    banner.style.transform = `translateY(${scrolled * 0.5}px)`;
+  }
+});
+
+// ========================================
+// Header Shadow on Scroll
+// ========================================
+window.addEventListener('scroll', () => {
+  const header = document.querySelector('.site-header');
+  if (window.scrollY > 50) {
+    header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+  } else {
+    header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.05)';
+  }
+});
+
+// ========================================
+// Animate Elements on Scroll (Intersection Observer)
+// ========================================
+const observerOptions = {
+  threshold: 0.2,
+  rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, observerOptions);
+
+// Observe service items, testimonials, etc.
+document.querySelectorAll('.service--content .item, .testimonial--content .item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(30px)';
+  el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+  observer.observe(el);
+});
 
 // Projem Var Popup JS
 const REFERANS_KODU = "6134-esra"; // <--- Referans kodunu buradan değiştirebilirsin
