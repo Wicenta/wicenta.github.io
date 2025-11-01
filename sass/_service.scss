@@ -1,61 +1,169 @@
 #service {
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  position: relative;
+  
   h2 {
     max-width: 1200px;
     display: block;
-    margin: 0 auto 30px auto;
-  }
-  .service--content {
-    display: block;
-    @media screen and (min-width: 768px) {
-      display: flex;
-      justify-content: space-between;
+    margin: 0 auto 60px;
+    text-align: center;
+    color: $primary-dark;
+    
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
     }
+  }
+  
+  .service--content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    
+    @media screen and (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+    
+    @media screen and (min-width: 1200px) {
+      gap: 40px;
+    }
+    
     .item {
-      flex-basis: 32%;
+      background: #ffffff;
       text-align: center;
-      border: 1px solid #E9EBEC;
-      padding: 20px 10px 40px;
-      margin-bottom: 30px;
+      border-radius: 24px;
+      padding: 40px 30px;
+      box-shadow: $shadow-md;
+      transition: all $transition-base;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      
       @media screen and (min-width: 768px) {
-        margin-bottom: 0;
+        padding: 50px 35px;
       }
-      transition: background-color 0.8s ease-in;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: $gradient-purple;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform $transition-base;
+      }
+      
+      &:hover {
+        transform: translateY(-10px);
+        box-shadow: $shadow-xl;
+        
+        &::before {
+          transform: scaleX(1);
+        }
+        
+        img {
+          transform: scale(1.1) rotate(5deg);
+        }
+        
+        h3 {
+          color: $primary-purple;
+        }
+        
+        a {
+          background: $gradient-purple;
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+        }
+      }
+      
       h3 {
         text-transform: uppercase;
         font-weight: 700;
+        font-size: 22px;
+        color: $primary-dark;
+        margin: 25px 0 20px;
+        transition: color $transition-base;
+        
+        @media screen and (min-width: 768px) {
+          font-size: 24px;
+        }
       }
+      
       img {
-        max-width: 80%;
+        max-width: 120px;
+        width: 100%;
+        height: auto;
         display: block;
         margin: 0 auto;
+        transition: all $transition-base;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+        
+        @media screen and (min-width: 768px) {
+          max-width: 140px;
+        }
       }
+      
       p {
         font-style: italic;
         display: block;
-        margin-bottom: 30px;
-        text-shadow: 0 1px 2px #222;
+        margin: 20px 0 30px;
+        color: rgba($primary-dark, 0.7);
+        line-height: 1.8;
+        font-size: 16px;
+        flex-grow: 1;
+        
+        @media screen and (min-width: 768px) {
+          font-size: 17px;
+        }
       }
+      
       a {
-        border: 1px solid #7f53ac;
-        border-radius: 4px;
-        padding: 10px 30px;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 35px;
         color: #FFF;
         text-decoration: none;
         text-transform: uppercase;
         font-weight: 700;
-        letter-spacing: 1.3px;
-        transition: all 0.8s ease-in-out;
-        background-color: #9921e8;
-        background-image: linear-gradient(315deg, #9921e8 0%, #5f72be 74%);
-      }
-      a:hover {
-        background-color: #7f5a83;
-        background-image: linear-gradient(315deg, #7f5a83 0%, #0d324d 74%);
-        border: #0d324d;   
+        letter-spacing: 1.2px;
+        font-size: 14px;
+        transition: all $transition-base;
+        background: $gradient-purple;
+        box-shadow: $shadow-md;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.3);
+          transform: translate(-50%, -50%);
+          transition: width 0.6s, height 0.6s;
+        }
+        
+        &:hover {
+          &::before {
+            width: 300px;
+            height: 300px;
+          }
+        }
+        
+        &:active {
+          transform: translateY(-1px);
+        }
       }
     }
-  }
-  .item:hover {
-    background-color: #DEF0FF;
   }
 }

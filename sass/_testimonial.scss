@@ -1,38 +1,119 @@
 #testimonial {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  position: relative;
+  
   h2 {
     max-width: 1200px;
     display: block;
-    margin: 0 auto 30px auto;
-  }
-  .testimonial--content {
-    display: block;
-    @media screen and (min-width: 768px) {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      align-items: flex-start;
+    margin: 0 auto 60px;
+    text-align: center;
+    color: $primary-dark;
+    
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
     }
+  }
+  
+  .testimonial--content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    
+    @media screen and (min-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 35px;
+    }
+    
+    @media screen and (min-width: 1200px) {
+      gap: 40px;
+    }
+    
     .item {
-      flex-basis: 45%;
-      margin: 15px 0;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 40px 35px;
+      box-shadow: $shadow-md;
+      transition: all $transition-base;
+      position: relative;
+      
+      &:hover {
+        transform: translateY(-8px);
+        box-shadow: $shadow-xl;
+        
+        blockquote p {
+          background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        }
+      }
+      
+      &::before {
+        content: '"';
+        position: absolute;
+        top: 20px;
+        left: 30px;
+        font-size: 80px;
+        font-weight: 700;
+        color: rgba($primary-purple, 0.15);
+        font-family: Georgia, serif;
+        line-height: 1;
+      }
     }
   }
 }
 
 blockquote {
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 blockquote p {
-  padding: 15px;
-  background: #DEF0FF;
-  border-radius: 5px;
+  padding: 25px 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border-radius: 15px;
+  font-size: 17px;
+  line-height: 1.8;
+  color: rgba($primary-dark, 0.8);
+  margin: 0 0 25px;
+  position: relative;
+  border-left: 4px solid $primary-purple;
+  transition: all $transition-base;
+  font-style: italic;
+  
+  @media screen and (min-width: 768px) {
+    font-size: 18px;
+    padding: 30px 25px;
+  }
+  
+  &::before {
+    content: '';
+    display: none;
+  }
+  
+  &::after {
+    content: '';
+    display: none;
+  }
 }
 
-blockquote p::before {
-  content: '\201C';
-}
-
-blockquote p::after {
-  content: '\201D';
+figcaption {
+  font-size: 16px;
+  color: $primary-dark;
+  font-weight: 600;
+  margin-top: 15px;
+  
+  cite {
+    display: block;
+    font-size: 14px;
+    color: rgba($primary-dark, 0.6);
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 5px;
+  }
+  
+  &::before {
+    content: '? ';
+    color: $primary-purple;
+    font-weight: 700;
+  }
 }
