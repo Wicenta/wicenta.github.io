@@ -1,0 +1,3059 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>motoMEST</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='50' cy='50' rx='35' ry='30' fill='%23f97316'/%3E%3Cpath d='M50 35 C45 35 40 38 38 42 L38 48 C38 52 41 55 45 56 L50 57 L55 56 C59 55 62 52 62 48 L62 42 C60 38 55 35 50 35 Z' fill='%23333'/%3E%3Ccircle cx='28' cy='52' r='4' fill='%23333'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Bebas+Neue&family=Anton&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #dc2626;
+            --primary-black: #0a0a0a;
+            --primary-gray: #1f1f1f;
+            --accent-orange: #f97316;
+            --accent-yellow: #fbbf24;
+            --text-light: #f5f5f5;
+            --text-gray: #a3a3a3;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-light);
+            overflow-x: hidden;
+            background: var(--primary-black);
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
+
+        /* Splash Loading Screen */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+            overflow: hidden;
+        }
+
+        /* Splash screen aktifken arka planı gizle */
+        body.splash-active {
+            overflow: hidden;
+        }
+
+        body.splash-active .video-background,
+        body.splash-active .navbar,
+        body.splash-active .hero-section,
+        body.splash-active .section,
+        body.splash-active .footer {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        .splash-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 50%);
+            animation: backgroundPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Animated Particles */
+        .splash-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .splash-particles::before,
+        .splash-particles::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-red);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px var(--primary-red),
+                0 0 20px var(--primary-red);
+            animation: particleFloat 8s ease-in-out infinite;
+        }
+
+        .splash-particles::before {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .splash-particles::after {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+            width: 6px;
+            height: 6px;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.3;
+            }
+            25% {
+                transform: translateY(-30px) translateX(20px);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-60px) translateX(-10px);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translateY(-30px) translateX(-20px);
+                opacity: 0.6;
+            }
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .splash-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+            animation: logoContainerScale 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes logoContainerScale {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .splash-piston-left {
+            width: 80px;
+            height: 140px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Silindir (Cylinder) */
+        .splash-piston-left::before {
+            content: '';
+            position: absolute;
+            width: 65px;
+            height: 140px;
+            background: linear-gradient(180deg, 
+                rgba(50, 50, 50, 1) 0%,
+                rgba(25, 25, 25, 1) 30%,
+                rgba(15, 15, 15, 1) 50%,
+                rgba(25, 25, 25, 1) 70%,
+                rgba(50, 50, 50, 1) 100%);
+            border: 3px solid rgba(120, 120, 120, 0.6);
+            border-radius: 32px;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.9),
+                inset 0 10px 20px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(255, 255, 255, 0.15),
+                0 0 40px rgba(255, 255, 255, 0.05);
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Piston Rod (Bağlantı Kolu) - Sol */
+        .splash-piston-left {
+            background: 
+                linear-gradient(90deg, 
+                    transparent 0%,
+                    rgba(200, 220, 240, 0.2) 48%,
+                    rgba(220, 240, 255, 0.3) 50%,
+                    rgba(200, 220, 240, 0.2) 52%,
+                    transparent 100%),
+                linear-gradient(180deg,
+                    rgba(180, 200, 220, 0.3) 0%,
+                    transparent 50%,
+                    rgba(180, 200, 220, 0.3) 100%);
+            background-size: 6px 100%, 100% 100%;
+            background-position: center, center;
+            position: relative;
+        }
+
+        /* Piston Head - Sol (Parlak Alüminyum) */
+        .splash-piston-left::after {
+            content: '';
+            position: absolute;
+            width: 54px;
+            height: 42px;
+            background: 
+                linear-gradient(135deg, 
+                    #e8e8e8 0%,
+                    #f5f5f5 15%,
+                    #ffffff 30%,
+                    #f0f0f0 45%,
+                    #e0e0e0 60%,
+                    #d5d5d5 75%,
+                    #c8c8c8 100%);
+            border-radius: 27px 27px 23px 23px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 0 30px rgba(255, 255, 255, 0.8),
+                0 0 60px rgba(200, 220, 255, 0.5),
+                0 0 90px rgba(180, 200, 255, 0.3),
+                inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                inset -2px 0 15px rgba(200, 200, 200, 0.2),
+                inset 0 0 25px rgba(240, 245, 255, 0.4);
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pistonMoveUpDown 1.2s ease-in-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes pistonMoveUpDown {
+            0%, 100% {
+                top: 15px;
+                box-shadow: 
+                    0 0 30px rgba(255, 255, 255, 0.8),
+                    0 0 60px rgba(200, 220, 255, 0.5),
+                    0 0 90px rgba(180, 200, 255, 0.3),
+                    inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                    inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                    inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                    inset -2px 0 15px rgba(200, 200, 200, 0.2);
+            }
+            50% {
+                top: 85px;
+                box-shadow: 
+                    0 0 35px rgba(255, 255, 255, 0.9),
+                    0 0 70px rgba(200, 220, 255, 0.6),
+                    0 0 100px rgba(180, 200, 255, 0.4),
+                    inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                    inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                    inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                    inset -2px 0 15px rgba(200, 200, 200, 0.2);
+            }
+        }
+
+        .splash-piston-right {
+            width: 80px;
+            height: 140px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Silindir (Cylinder) */
+        .splash-piston-right::before {
+            content: '';
+            position: absolute;
+            width: 65px;
+            height: 140px;
+            background: linear-gradient(180deg, 
+                rgba(50, 50, 50, 1) 0%,
+                rgba(25, 25, 25, 1) 30%,
+                rgba(15, 15, 15, 1) 50%,
+                rgba(25, 25, 25, 1) 70%,
+                rgba(50, 50, 50, 1) 100%);
+            border: 3px solid rgba(220, 38, 38, 0.8);
+            border-radius: 32px;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.9),
+                inset 0 10px 20px rgba(0, 0, 0, 0.5),
+                0 0 25px rgba(220, 38, 38, 0.4),
+                0 0 50px rgba(220, 38, 38, 0.2);
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Piston Rod (Bağlantı Kolu) - Sağ */
+        .splash-piston-right {
+            background: 
+                linear-gradient(90deg, 
+                    transparent 0%,
+                    rgba(200, 220, 240, 0.2) 48%,
+                    rgba(220, 240, 255, 0.3) 50%,
+                    rgba(200, 220, 240, 0.2) 52%,
+                    transparent 100%),
+                linear-gradient(180deg,
+                    rgba(180, 200, 220, 0.3) 0%,
+                    transparent 50%,
+                    rgba(180, 200, 220, 0.3) 100%);
+            background-size: 6px 100%, 100% 100%;
+            background-position: center, center;
+            position: relative;
+        }
+
+        /* Piston Head - Sağ (Parlak Alüminyum) */
+        .splash-piston-right::after {
+            content: '';
+            position: absolute;
+            width: 54px;
+            height: 42px;
+            background: 
+                linear-gradient(135deg, 
+                    #e8e8e8 0%,
+                    #f5f5f5 15%,
+                    #ffffff 30%,
+                    #f0f0f0 45%,
+                    #e0e0e0 60%,
+                    #d5d5d5 75%,
+                    #c8c8c8 100%);
+            border-radius: 27px 27px 23px 23px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 
+                0 0 30px rgba(255, 255, 255, 0.8),
+                0 0 60px rgba(200, 220, 255, 0.5),
+                0 0 90px rgba(180, 200, 255, 0.3),
+                inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                inset -2px 0 15px rgba(200, 200, 200, 0.2),
+                inset 0 0 25px rgba(240, 245, 255, 0.4);
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pistonMoveUpDownRight 1.2s ease-in-out infinite 0.3s;
+            z-index: 2;
+        }
+
+        @keyframes pistonMoveUpDownRight {
+            0%, 100% {
+                top: 15px;
+                box-shadow: 
+                    0 0 30px rgba(255, 255, 255, 0.8),
+                    0 0 60px rgba(200, 220, 255, 0.5),
+                    0 0 90px rgba(180, 200, 255, 0.3),
+                    inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                    inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                    inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                    inset -2px 0 15px rgba(200, 200, 200, 0.2);
+            }
+            50% {
+                top: 85px;
+                box-shadow: 
+                    0 0 35px rgba(255, 255, 255, 0.9),
+                    0 0 70px rgba(200, 220, 255, 0.6),
+                    0 0 100px rgba(180, 200, 255, 0.4),
+                    inset 0 4px 12px rgba(255, 255, 255, 0.95),
+                    inset 0 -4px 10px rgba(0, 0, 0, 0.3),
+                    inset 2px 0 15px rgba(255, 255, 255, 0.4),
+                    inset -2px 0 15px rgba(200, 200, 200, 0.2);
+            }
+        }
+
+        .splash-logo-text {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            position: relative;
+        }
+
+        .splash-logo-text::before {
+            content: '//';
+            position: absolute;
+            left: -40px;
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            opacity: 0.8;
+            animation: fadeInLeft 1s ease-out 0.5s both;
+        }
+
+        .splash-moto {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.5),
+                0 0 20px rgba(255, 255, 255, 0.3),
+                0 2px 5px rgba(0, 0, 0, 0.8);
+            animation: fadeInUp 1s ease-out 0.7s both, textGlow 3s ease-in-out infinite 2s;
+            position: relative;
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.5),
+                    0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                text-shadow: 
+                    0 0 15px rgba(255, 255, 255, 0.8),
+                    0 0 30px rgba(255, 255, 255, 0.5),
+                    0 0 40px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .splash-mest {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 
+                0 0 30px var(--primary-red),
+                0 0 60px rgba(220, 38, 38, 0.8),
+                0 0 90px rgba(220, 38, 38, 0.5),
+                0 2px 10px rgba(0, 0, 0, 0.8);
+            animation: fadeInUp 1s ease-out 0.9s both, glow-pulse 2s ease-in-out infinite 2s, scalePulse 3s ease-in-out infinite 2.5s;
+            position: relative;
+            display: inline-block;
+        }
+
+        @keyframes scalePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 0.8;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                text-shadow: 0 0 30px var(--primary-red),
+                             0 0 60px rgba(220, 38, 38, 0.8);
+            }
+            50% {
+                text-shadow: 0 0 40px var(--primary-red),
+                             0 0 80px rgba(220, 38, 38, 1),
+                             0 0 100px rgba(220, 38, 38, 0.6);
+            }
+        }
+
+        .splash-info {
+            text-align: center;
+            margin-top: 30px;
+            animation: fadeIn 1s ease-out 1.2s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .splash-services {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-shadow: 
+                0 0 10px rgba(220, 38, 38, 0.5),
+                0 2px 5px rgba(0, 0, 0, 0.8);
+            animation: textFlicker 4s ease-in-out infinite 2s;
+        }
+
+        @keyframes textFlicker {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .splash-phone {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: white;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 
+                0 0 15px rgba(255, 255, 255, 0.5),
+                0 0 30px rgba(255, 255, 255, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.8);
+            animation: phonePulse 3s ease-in-out infinite 2.5s;
+        }
+
+        @keyframes phonePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .splash-loader {
+            width: 250px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 50px;
+            overflow: hidden;
+            position: relative;
+            animation: fadeIn 1s ease-out 1.4s both;
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.5),
+                0 0 10px rgba(220, 38, 38, 0.3);
+        }
+
+        .splash-loader-bar {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--primary-red) 0%, 
+                var(--accent-orange) 50%,
+                var(--primary-red) 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            width: 0%;
+            animation: loading 2.5s ease-in-out forwards, shimmer 2s linear infinite;
+            box-shadow: 
+                0 0 15px var(--primary-red),
+                0 0 30px rgba(220, 38, 38, 0.6),
+                inset 0 0 10px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .splash-loader-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                transparent 100%);
+            animation: shimmer 2s linear infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                width: 0%;
+            }
+            50% {
+                width: 70%;
+            }
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        p, span, div, label, input, textarea, select {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        input, textarea, select {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Video Background - Daha iyi uyum için */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.4) contrast(1.2);
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                rgba(10, 10, 10, 0.96) 0%,
+                rgba(10, 10, 10, 0.88) 25%,
+                rgba(31, 31, 31, 0.85) 40%,
+                rgba(220, 38, 38, 0.12) 50%,
+                rgba(31, 31, 31, 0.85) 60%,
+                rgba(10, 10, 10, 0.88) 75%,
+                rgba(10, 10, 10, 0.96) 100%
+            );
+            z-index: -1;
+        }
+
+        .video-overlay::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(220, 38, 38, 0.05) 0%,
+                transparent 70%
+            );
+            pointer-events: none;
+        }
+
+        /* Navbar - Profesyonel ve Motorsiklet Temalı */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 3px solid var(--primary-red);
+            box-shadow: 0 4px 30px rgba(220, 38, 38, 0.4),
+                        0 0 20px rgba(220, 38, 38, 0.2),
+                        inset 0 -1px 0 rgba(220, 38, 38, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 10, 10, 0.98);
+            box-shadow: 0 6px 40px rgba(220, 38, 38, 0.6),
+                        0 0 30px rgba(220, 38, 38, 0.3),
+                        inset 0 -1px 0 rgba(220, 38, 38, 0.4);
+            border-bottom-width: 4px;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--primary-red);
+            border-radius: 50%;
+            animation: rotate 3s linear infinite;
+            box-shadow: 0 0 15px var(--primary-red),
+                        inset 0 0 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .logo-icon::after {
+            content: '🏍️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.8));
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px var(--primary-red),
+                         0 0 30px rgba(220, 38, 38, 0.5),
+                         2px 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .logo-text::before {
+            content: 'MOTO';
+            font-size: 1.2rem;
+            color: var(--text-light);
+            opacity: 0.9;
+        }
+
+        .logo-text span {
+            font-size: 2.2rem;
+            color: var(--primary-red);
+            text-shadow: 0 0 20px var(--primary-red),
+                         0 0 40px rgba(220, 38, 38, 0.8),
+                         2px 2px 4px rgba(0, 0, 0, 0.8);
+            animation: glow-text 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow-text {
+            from {
+                text-shadow: 0 0 20px var(--primary-red),
+                             0 0 40px rgba(220, 38, 38, 0.8);
+            }
+            to {
+                text-shadow: 0 0 30px var(--primary-red),
+                             0 0 60px rgba(220, 38, 38, 1),
+                             0 0 80px rgba(220, 38, 38, 0.6);
+            }
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-menu li a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            border: 2px solid transparent;
+            background: rgba(31, 31, 31, 0.3);
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 8px;
+            padding: 2px;
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-orange));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-menu li a:hover {
+            color: var(--primary-red);
+            text-shadow: 0 0 15px var(--primary-red);
+            background: rgba(220, 38, 38, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu li a:hover::before {
+            opacity: 1;
+        }
+
+        /* Floating WhatsApp Button - Sağ Alt */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6),
+                        0 0 20px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-whatsapp 2s ease-in-out infinite;
+        }
+
+        .floating-whatsapp:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.8),
+                        0 0 30px rgba(37, 211, 102, 0.6);
+        }
+
+        .floating-whatsapp::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 3px solid rgba(37, 211, 102, 0.3);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        .floating-whatsapp svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .floating-whatsapp span {
+            display: none;
+        }
+
+        /* WhatsApp Modal */
+        .whatsapp-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .whatsapp-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .whatsapp-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+        }
+
+        .whatsapp-modal-content {
+            position: relative;
+            background: linear-gradient(135deg, rgba(31, 31, 31, 0.98) 0%, rgba(20, 20, 20, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            z-index: 10001;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.8),
+                0 0 40px rgba(220, 38, 38, 0.3),
+                inset 0 0 20px rgba(220, 38, 38, 0.1);
+            transform: scale(0.8) translateY(50px);
+            animation: modalSlideIn 0.4s ease-out forwards;
+        }
+
+        .whatsapp-modal-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.8) 0%, 
+                rgba(249, 115, 22, 0.6) 50%,
+                rgba(220, 38, 38, 0.8) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.8) translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .whatsapp-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 2px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .whatsapp-modal-header h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary-red);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+
+        .whatsapp-modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .whatsapp-modal-close:hover {
+            background: rgba(220, 38, 38, 0.2);
+            color: var(--primary-red);
+            transform: rotate(90deg);
+        }
+
+        .whatsapp-modal-body {
+            padding: 30px;
+        }
+
+        .whatsapp-modal-label {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .whatsapp-modal-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(10, 10, 10, 0.7);
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .whatsapp-modal-textarea:focus {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+            background: rgba(10, 10, 10, 0.9);
+        }
+
+        .whatsapp-modal-textarea::placeholder {
+            color: var(--text-gray);
+            opacity: 0.6;
+        }
+
+        .whatsapp-modal-footer {
+            display: flex;
+            gap: 15px;
+            padding: 20px 30px;
+            border-top: 2px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .whatsapp-modal-btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .whatsapp-modal-cancel {
+            background: rgba(100, 100, 100, 0.3);
+            color: var(--text-light);
+            border: 2px solid rgba(100, 100, 100, 0.5);
+        }
+
+        .whatsapp-modal-cancel:hover {
+            background: rgba(100, 100, 100, 0.5);
+            border-color: rgba(150, 150, 150, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .whatsapp-modal-send {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border: 2px solid rgba(37, 211, 102, 0.5);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .whatsapp-modal-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
+            background: linear-gradient(135deg, #2fe076 0%, #1da88f 100%);
+        }
+
+        @keyframes pulse-whatsapp {
+            0%, 100% {
+                box-shadow: 0 8px 30px rgba(37, 211, 102, 0.6),
+                            0 0 20px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 35px rgba(37, 211, 102, 0.8),
+                            0 0 30px rgba(37, 211, 102, 0.6);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-menu-toggle span {
+            width: 30px;
+            height: 3px;
+            background: var(--primary-red);
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section - Büyük ve Etkileyici */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .hero-title .highlight {
+            color: var(--primary-red);
+            text-shadow: 0 0 30px var(--primary-red), 0 0 60px var(--primary-red);
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            letter-spacing: 2px;
+        }
+
+        .hero-description {
+            font-size: 1.35rem;
+            color: var(--text-gray);
+            margin-bottom: 50px;
+            line-height: 2;
+            animation: fadeInUp 1s ease-out 0.5s both;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+
+        /* CTA Buttons - Motorsiklet Temalı */
+        .btn {
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-orange) 100%);
+            color: white;
+            box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(220, 38, 38, 0.7);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid var(--primary-red);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-red);
+            transform: translateY(-5px);
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
+            color: white !important;
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.5) !important;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(37, 211, 102, 0.7) !important;
+            background: linear-gradient(135deg, #128C7E 0%, #25D366 100%) !important;
+        }
+
+        .btn-sahibinden {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+            color: #000 !important;
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.5) !important;
+            font-weight: 700 !important;
+        }
+
+        .btn-sahibinden:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(255, 215, 0, 0.7) !important;
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%) !important;
+        }
+
+        /* Sections - Kapsamlı ve Profesyonel */
+        .section {
+            padding: 100px 20px;
+            position: relative;
+            margin: 60px 0;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-container::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.1) 0%, 
+                transparent 30%,
+                transparent 70%,
+                rgba(220, 38, 38, 0.1) 100%);
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+            padding: 40px 20px;
+            background: rgba(31, 31, 31, 0.6);
+            backdrop-filter: blur(10px);
+            border: 3px solid transparent;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5),
+                        inset 0 0 30px rgba(220, 38, 38, 0.1);
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 25px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.8) 0%, 
+                rgba(249, 115, 22, 0.6) 50%,
+                rgba(220, 38, 38, 0.8) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            color: var(--text-light);
+            text-shadow: 0 0 20px rgba(220, 38, 38, 0.5),
+                         0 0 40px rgba(220, 38, 38, 0.3);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 150px;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary-red) 20%,
+                var(--accent-orange) 50%,
+                var(--primary-red) 80%,
+                transparent);
+            margin: 25px auto;
+            border-radius: 3px;
+            box-shadow: 0 0 15px var(--primary-red);
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 2;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        /* Services Grid - Motorsiklet Temalı */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .service-card {
+            background: rgba(31, 31, 31, 0.9);
+            backdrop-filter: blur(15px);
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(220, 38, 38, 0.2);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.6) 0%, 
+                rgba(249, 115, 22, 0.4) 50%,
+                rgba(220, 38, 38, 0.6) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(220, 38, 38, 0.6),
+                        0 0 30px rgba(220, 38, 38, 0.4),
+                        inset 0 0 20px rgba(220, 38, 38, 0.1);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .service-card p {
+            color: var(--text-gray);
+            line-height: 1.9;
+            font-size: 1.15rem;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+        }
+
+        .about-text {
+            font-size: 1.25rem;
+            line-height: 2.1;
+            color: var(--text-gray);
+            background: rgba(31, 31, 31, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid transparent;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 900px;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .about-text p {
+            font-size: 1.25rem;
+            line-height: 2.1;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .about-text::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.6) 0%, 
+                rgba(249, 115, 22, 0.4) 50%,
+                rgba(220, 38, 38, 0.6) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+        }
+
+        .about-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            background: rgba(31, 31, 31, 0.9);
+            backdrop-filter: blur(10px);
+            border: 3px solid transparent;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 15px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                var(--primary-red) 0%, 
+                var(--accent-orange) 50%,
+                var(--primary-red) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6),
+                        0 0 25px rgba(220, 38, 38, 0.4);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary-red);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Contact Form - Profesyonel */
+        .contact-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(31, 31, 31, 0.9);
+            backdrop-filter: blur(15px);
+            border: 3px solid transparent;
+            border-radius: 25px;
+            padding: 50px;
+            position: relative;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6),
+                        inset 0 0 30px rgba(220, 38, 38, 0.1);
+        }
+
+        .contact-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 25px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.8) 0%, 
+                rgba(249, 115, 22, 0.6) 50%,
+                rgba(220, 38, 38, 0.8) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23dc2626' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            padding-right: 50px;
+        }
+
+        .form-group select option {
+            background: var(--primary-gray);
+            color: var(--text-light);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            border-width: 3px;
+            box-shadow: 0 0 25px rgba(220, 38, 38, 0.5),
+                        inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                        0 0 0 3px rgba(220, 38, 38, 0.2);
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--accent-orange) 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 35px rgba(220, 38, 38, 0.7);
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .info-card {
+            background: rgba(31, 31, 31, 0.9);
+            backdrop-filter: blur(15px);
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 3px;
+            background: linear-gradient(135deg, 
+                rgba(220, 38, 38, 0.6) 0%, 
+                rgba(249, 115, 22, 0.4) 50%,
+                rgba(220, 38, 38, 0.6) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                         linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#fff 0 0) content-box, 
+                 linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            z-index: -1;
+            opacity: 0.6;
+            transition: opacity 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 45px rgba(220, 38, 38, 0.6),
+                        0 0 30px rgba(220, 38, 38, 0.4);
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary-red);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .info-card p {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        /* Info Card Social Icons */
+        .info-social-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .info-social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .info-social-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+            transition: all 0.3s ease;
+            z-index: 1;
+            position: relative;
+        }
+
+        .info-social-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .info-social-whatsapp:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+        }
+
+        .info-social-instagram {
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            box-shadow: 0 4px 15px rgba(188, 24, 136, 0.3);
+        }
+
+        .info-social-instagram:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(188, 24, 136, 0.5),
+                        0 0 15px rgba(220, 38, 67, 0.4);
+        }
+
+        .info-social-instagram svg {
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+        }
+
+        .info-social-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .info-social-icon:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(10, 10, 10, 0.95);
+            border-top: 2px solid var(--primary-red);
+            padding: 30px 40px;
+            text-align: right;
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .footer p {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .footer p::before {
+            content: '🏍️';
+            margin-right: 8px;
+        }
+
+        /* Social Media Box */
+        .social-media-box {
+            background: rgba(31, 31, 31, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(249, 115, 22, 0.6);
+            border-radius: 15px;
+            padding: 30px 40px;
+            margin: 30px auto;
+            max-width: 400px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5),
+                        0 0 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .social-media-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .social-media-header svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .social-media-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
+
+        /* Social Media Icons */
+        .social-media {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .social-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        .social-icon svg {
+            width: 28px;
+            height: 28px;
+            fill: white;
+            transition: all 0.3s ease;
+            z-index: 1;
+            position: relative;
+        }
+
+        .social-icon-whatsapp {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        .social-icon-whatsapp:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+        }
+
+        .social-icon-instagram {
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            box-shadow: 0 4px 15px rgba(225, 48, 108, 0.4);
+        }
+
+        .social-icon-instagram:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(225, 48, 108, 0.6);
+        }
+
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .social-icon:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-scroll {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                padding: 50px 20px;
+                transition: left 0.3s ease;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-wrapper {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Hero Section */
+            .hero-section {
+                padding: 100px 15px 60px;
+                min-height: 90vh;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+                padding: 0 10px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 15px 30px;
+                font-size: 0.95rem;
+            }
+
+            /* Sections */
+            .section {
+                padding: 60px 15px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+
+            .section-subtitle {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+
+            /* Services */
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                margin-top: 40px;
+            }
+
+            .service-card {
+                padding: 30px 20px;
+            }
+
+            .service-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+
+            .service-card h3 {
+                font-size: 1.2rem;
+            }
+
+            .service-card p {
+                font-size: 1rem;
+            }
+
+            /* About */
+            .about-content {
+                flex-direction: column;
+            }
+
+            .about-text {
+                padding: 30px 20px;
+                font-size: 1rem;
+                max-width: 100%;
+            }
+
+            .about-text p {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .about-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                margin-top: 30px;
+            }
+
+            .stat-card {
+                padding: 20px 15px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
+            }
+
+            /* Parts Section */
+            .parts-content {
+                padding: 30px 20px;
+            }
+
+            .sahibinden-btn {
+                padding: 15px 25px;
+                font-size: 1rem;
+            }
+
+            /* Contact */
+            .contact-wrapper {
+                padding: 30px 15px;
+            }
+
+            .contact-form {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-group {
+                margin-left: 0 !important;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+
+            .form-group label {
+                font-size: 0.95rem;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+
+            .submit-btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-top: 40px;
+            }
+
+            .info-card {
+                padding: 25px 20px;
+            }
+
+            .info-card h3 {
+                font-size: 1.1rem;
+            }
+
+            .info-card p {
+                font-size: 1rem;
+            }
+
+            .info-social-icons {
+                gap: 15px;
+            }
+
+            .info-social-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .info-social-icon svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Footer */
+            .footer {
+                padding: 30px 15px;
+            }
+
+            .footer p {
+                font-size: 0.8rem;
+                text-align: center;
+            }
+
+            /* Floating WhatsApp */
+            .floating-whatsapp {
+                width: 60px;
+                height: 60px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .floating-whatsapp svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            /* Navbar */
+            .navbar {
+                padding: 15px 10px;
+            }
+
+            .logo-section {
+                gap: 10px;
+            }
+
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
+            }
+
+            .logo-text::before {
+                font-size: 0.9rem;
+            }
+
+            .logo-text span {
+                font-size: 1.5rem;
+            }
+
+            /* Splash Screen Mobile */
+            .splash-logo-container {
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+
+            .splash-piston-left,
+            .splash-piston-right {
+                width: 60px;
+                height: 110px;
+            }
+
+            .splash-piston-left::before,
+            .splash-piston-right::before {
+                width: 50px;
+                height: 110px;
+            }
+
+            .splash-piston-left::after,
+            .splash-piston-right::after {
+                width: 42px;
+                height: 35px;
+            }
+
+            .splash-moto {
+                font-size: 1.3rem;
+            }
+
+            .splash-mest {
+                font-size: 2.5rem;
+            }
+
+            .splash-services {
+                font-size: 0.75rem;
+                letter-spacing: 2px;
+            }
+
+            .splash-phone {
+                font-size: 1.4rem;
+            }
+
+            .splash-loader {
+                width: 200px;
+                margin-top: 40px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.6rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .splash-moto {
+                font-size: 1.1rem;
+            }
+
+            .splash-mest {
+                font-size: 2rem;
+            }
+
+            .splash-piston-left,
+            .splash-piston-right {
+                width: 50px;
+                height: 100px;
+            }
+
+            .splash-piston-left::before,
+            .splash-piston-right::before {
+                width: 42px;
+                height: 100px;
+            }
+
+            .splash-piston-left::after,
+            .splash-piston-right::after {
+                width: 36px;
+                height: 30px;
+            }
+
+            .info-card h3 {
+                font-size: 1rem;
+            }
+
+            .footer p {
+                font-size: 0.7rem;
+            }
+
+            .nav-menu li a {
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+
+            .service-card {
+                padding: 25px 15px;
+            }
+
+            .about-text {
+                padding: 25px 15px;
+            }
+
+            .contact-form {
+                padding: 25px 15px;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (max-width: 768px) {
+            /* Touch targets minimum 44x44px */
+            .btn,
+            .submit-btn,
+            .info-social-icon,
+            .floating-whatsapp {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            /* Better spacing for touch */
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                min-height: 44px;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+
+            /* Prevent text scaling on iOS */
+            * {
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+
+            /* Better video background on mobile */
+            .video-background video {
+                object-fit: cover;
+            }
+
+            /* Navbar improvements */
+            .navbar.scrolled {
+                padding: 12px 10px;
+            }
+
+            /* Logo mobile adjustments */
+            .logo-text::before {
+                left: -35px;
+            }
+
+            /* WhatsApp Modal Mobile */
+            .whatsapp-modal-content {
+                width: 95%;
+                max-width: 100%;
+                margin: 20px;
+            }
+
+            .whatsapp-modal-header {
+                padding: 20px;
+            }
+
+            .whatsapp-modal-header h3 {
+                font-size: 1.2rem;
+            }
+
+            .whatsapp-modal-body {
+                padding: 20px;
+            }
+
+            .whatsapp-modal-footer {
+                padding: 15px 20px;
+                flex-direction: column;
+            }
+
+            .whatsapp-modal-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Loading Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <!-- Animated Particles Background -->
+        <div class="splash-particles"></div>
+        
+        <div class="splash-logo-container">
+            <div class="splash-piston-left"></div>
+            <div class="splash-logo-text">
+                <span class="splash-moto">MOTO</span>
+                <span class="splash-mest">MEST</span>
+            </div>
+            <div class="splash-piston-right"></div>
+        </div>
+        <div class="splash-info">
+            <div class="splash-services">ÖZEL SERVİS - TAMİR - BAKIM - ONARIM</div>
+            <div class="splash-phone">0539 930 53 01</div>
+        </div>
+        <div class="splash-loader">
+            <div class="splash-loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Video Background -->
+    <div class="video-background">
+        <video id="backgroundVideo" autoplay loop muted playsinline>
+            <source src="Video.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <div class="logo-icon"></div>
+                <div class="logo-text"><span>MEST</span></div>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#anasayfa">Anasayfa</a></li>
+                <li><a href="#hizmetler">Hizmetler</a></li>
+                <li><a href="#hakkimizda">Hakkımızda</a></li>
+                <li><a href="#yedek-parca">Yedek Parça</a></li>
+                <li><a href="#iletisim">İletişim</a></li>
+            </ul>
+            <div class="mobile-menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="anasayfa">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Profesyonel <span class="highlight">MOTOSİKLET</span><br>
+                Servis & Yedek Parça
+            </h1>
+            <p class="hero-subtitle">Yılların Deneyimi, Güvenilir Hizmet</p>
+            <p class="hero-description">
+                🏍️ Motosiklet tutkunlarının güvenilir adresi. Profesyonel ekibimiz ve modern ekipmanlarımızla 
+                motosikletinize en iyi bakımı sağlıyoruz. Orijinal yedek parça, kaliteli servis ve uzman teknik destek. 
+                Honda, Yamaha, Kawasaki, Suzuki, Ducati, BMW, KTM ve tüm markalar için profesyonel çözümler.
+            </p>
+            <div class="hero-buttons">
+                <a href="https://wa.me/905399305301?text=Merhaba,%20servis%20hizmeti%20hakkında%20bilgi%20almak%20istiyorum." 
+                   class="btn btn-whatsapp" target="_blank">Servis İçin WhatsApp</a>
+                <a href="#yedek-parca" class="btn btn-secondary">Yedek Parça</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section fade-in-scroll" id="hizmetler">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Hizmetlerimiz</h2>
+                <p class="section-subtitle">
+                    🏍️ Motosiklet bakım ve onarım konusunda kapsamlı hizmetler sunuyoruz. 
+                    Her marka ve model için profesyonel çözümler. Motor, şanzıman, elektrik, fren, 
+                    süspansiyon ve daha fazlası için uzman servis.
+                </p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">🔧</div>
+                    <h3>Genel Bakım</h3>
+                    <p>Periyodik bakım, yağ değişimi, filtre temizliği ve kontroller. Motosikletinizin sağlığı için düzenli bakım hizmetleri.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">⚙️</div>
+                    <h3>Motor Onarımı</h3>
+                    <p>Motor arızaları, piston, silindir, subap tamiri. Tüm motor problemlerinde uzman ekibimizle çözüm.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔌</div>
+                    <h3>Elektrik Sistemleri</h3>
+                    <p>Elektrik arızaları, akü, şarj sistemi, aydınlatma ve elektronik sistem tamiri.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🔩</div>
+                    <h3>Şase İşlemleri</h3>
+                    <p>Şase düzeltme, hizalama, kaynak işlemleri ve güvenlik kontrolleri. Profesyonel şase tamiri hizmetleri.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🛞</div>
+                    <h3>Lastik & Fren</h3>
+                    <p>Lastik değişimi, balans ayarı, fren balata, disk ve fren sistemi bakımı.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">✅</div>
+                    <h3>Test & Kontrol</h3>
+                    <p>Güvenlik kontrolleri, performans testleri, emisyon ölçümü ve kalite kontrolü.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="https://wa.me/905399305301?text=Merhaba,%20servis%20hizmeti%20hakkında%20detaylı%20bilgi%20almak%20istiyorum." 
+                   class="btn btn-primary" target="_blank">Tüm Hizmetler İçin İletişime Geç</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section fade-in-scroll" id="hakkimizda">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Hakkımızda</h2>
+                <p class="section-subtitle">
+                    Motosiklet tutkunları için kaliteli hizmet sunmak amacıyla kurulduk. 
+                    Müşteri memnuniyeti bizim önceliğimiz.
+                </p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        <strong>🏍️ Moto Mest</strong> olarak, motosiklet tutkunlarının güvenilir servis ortağıyız. 
+                        Yılların deneyimi, profesyonel ekibimiz ve modern ekipmanlarımızla motosikletinize en iyi bakımı sağlıyoruz. 
+                        Honda, Yamaha, Kawasaki, Suzuki, Ducati, BMW, KTM ve daha fazlası için uzman servis hizmeti sunuyoruz.
+                    </p>
+                    <p>
+                        🔧 Motosiklet bakımından komple motor revizyonuna, elektrik sisteminden şase işlemlerine kadar 
+                        tüm servis ihtiyaçlarınız için yanınızdayız. Her motosiklet markası ve modeli için özel çözümler üretiyoruz.
+                    </p>
+                    <p>
+                        ⚙️ Orijinal yedek parça temininde de güvenilir bir partner olarak, geniş ürün yelpazemizle 
+                        hizmetinizdeyiz. Sahibinden.com üzerinden yedek parça ihtiyaçlarınızı karşılayabilir, 
+                        servisimizden kaliteli bakım alabilirsiniz. Motosiklet tutkunları için kalite ve güvenilirlik.
+                    </p>
+                    <div class="about-stats">
+                        <div class="stat-card">
+                            <span class="stat-number">10+</span>
+                            <div class="stat-label">Yıl Deneyim</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">5000+</span>
+                            <div class="stat-label">Mutlu Müşteri</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">100%</span>
+                            <div class="stat-label">Müşteri Memnuniyeti</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">24/7</span>
+                            <div class="stat-label">Destek</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parts Section -->
+    <section class="section fade-in-scroll" id="yedek-parca">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Yedek Parça</h2>
+                <p class="section-subtitle">
+                    Orijinal ve kaliteli yedek parçalar için geniş ürün yelpazemizden faydalanabilirsiniz. 
+                    Tüm marka ve modeller için yedek parça temin ediyoruz.
+                </p>
+            </div>
+            <div style="text-align: center; margin-top: 60px;">
+                <p style="font-size: 1.3rem; color: var(--text-gray); margin-bottom: 30px; line-height: 2;">
+                    Yedek parça ihtiyaçlarınız için Sahibinden.com üzerinden bize ulaşabilirsiniz. 
+                    Geniş stok yelpazemiz ve hızlı teslimat seçeneklerimizle hizmetinizdeyiz.
+                </p>
+                <a href="https://motomestyedekparca.sahibinden.com" 
+                   class="btn btn-sahibinden" target="_blank" style="font-size: 1.2rem; padding: 20px 50px; display: inline-flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 1.8rem; font-weight: bold; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">🟡</span>
+                    <span style="font-weight: 700;">Sahibinden.com'da Yedek Parçalarımızı Görüntüle</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section fade-in-scroll" id="iletisim">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">İletişim</h2>
+                <p class="section-subtitle">
+                    Bize ulaşın, sorularınızı sorun veya randevu alın. 
+                    WhatsApp üzerinden anında iletişime geçebilirsiniz.
+                </p>
+            </div>
+            <div class="contact-wrapper">
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Adınız Soyadınız *</label>
+                        <input type="text" id="name" name="name" placeholder="Adınızı girin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefon Numaranız *</label>
+                        <input type="tel" id="phone" name="phone" placeholder="5XX XXX XX XX" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="motorMarka">Motosiklet Markası *</label>
+                            <select id="motorMarka" name="motorMarka" required>
+                                <option value="">Marka Seçiniz</option>
+                                <option value="Honda">Honda</option>
+                                <option value="Yamaha">Yamaha</option>
+                                <option value="Kawasaki">Kawasaki</option>
+                                <option value="Suzuki">Suzuki</option>
+                                <option value="Ducati">Ducati</option>
+                                <option value="BMW">BMW</option>
+                                <option value="KTM">KTM</option>
+                                <option value="Triumph">Triumph</option>
+                                <option value="Aprilia">Aprilia</option>
+                                <option value="Harley-Davidson">Harley-Davidson</option>
+                                <option value="Bajaj">Bajaj</option>
+                                <option value="Benelli">Benelli</option>
+                                <option value="Diğer">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1; margin-left: 20px;">
+                            <label for="motorModel">Motosiklet Modeli</label>
+                            <input type="text" id="motorModel" name="motorModel" placeholder="Model (örn: CBR 600RR)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="arizaTuru">Arıza Türü / İhtiyaç *</label>
+                        <select id="arizaTuru" name="arizaTuru" required>
+                            <option value="">Seçiniz</option>
+                            <option value="Genel Bakım">Genel Bakım</option>
+                            <option value="Motor Onarımı">Motor Onarımı</option>
+                            <option value="Elektrik Sistemi">Elektrik Sistemi</option>
+                            <option value="Şase İşlemleri">Şase İşlemleri</option>
+                            <option value="Lastik & Fren">Lastik & Fren</option>
+                            <option value="Test & Kontrol">Test & Kontrol</option>
+                            <option value="Yedek Parça">Yedek Parça</option>
+                            <option value="Bilgi Alma">Bilgi Alma</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Detaylı Açıklama</label>
+                        <textarea id="message" name="message" placeholder="Arıza veya ihtiyacınız hakkında detaylı bilgi veriniz..." rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">📱 WhatsApp ile Gönder</button>
+                </form>
+            </div>
+            <div class="info-grid" style="margin-top: 80px;">
+                <div class="info-card">
+                    <h3>📍 Adres</h3>
+                    <p>Ahmet Yesevi, Akçakent Sk. no:1<br>34903 Pendik/İstanbul</p>
+                </div>
+                <div class="info-card">
+                    <h3>📞 Telefon</h3>
+                    <p>0539 930 53 01</p>
+                </div>
+                <div class="info-card">
+                    <h3>🕒 Çalışma Saatleri</h3>
+                    <p>Pazartesi - Cumartesi<br>09:00 - 19:30</p>
+                </div>
+                <div class="info-card">
+                    <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; fill: white;">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                        SOSYAL MEDYA
+                    </h3>
+                    <div class="info-social-icons">
+                        <a href="https://wa.me/905399305301" class="info-social-icon info-social-whatsapp" target="_blank" title="WhatsApp">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/motomestt" class="info-social-icon info-social-instagram" target="_blank" title="Instagram">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="white" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating WhatsApp Button -->
+    <div class="floating-whatsapp" id="floatingWhatsApp" title="WhatsApp ile İletişime Geç">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+        <span>💬</span>
+    </div>
+
+    <!-- WhatsApp Message Modal -->
+    <div class="whatsapp-modal" id="whatsappModal">
+        <div class="whatsapp-modal-overlay"></div>
+        <div class="whatsapp-modal-content">
+            <div class="whatsapp-modal-header">
+                <h3>📱 WhatsApp Mesajı</h3>
+                <button class="whatsapp-modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="whatsapp-modal-body">
+                <p class="whatsapp-modal-label">Göndermek istediğiniz mesajı yazın:</p>
+                <textarea id="whatsappMessage" class="whatsapp-modal-textarea" placeholder="Örn: Merhaba, servis hizmeti hakkında bilgi almak istiyorum..." rows="4"></textarea>
+            </div>
+            <div class="whatsapp-modal-footer">
+                <button class="whatsapp-modal-btn whatsapp-modal-cancel" id="cancelModal">İptal</button>
+                <button class="whatsapp-modal-btn whatsapp-modal-send" id="sendWhatsApp">📱 Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Wicenta Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Splash Screen - Otomatik kapanma
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('splash-active');
+        });
+
+        window.addEventListener('load', function() {
+            const splashScreen = document.getElementById('splashScreen');
+            const loaderBar = document.querySelector('.splash-loader-bar');
+            
+            // Loading animasyonu tamamlandıktan sonra bekle
+            setTimeout(function() {
+                splashScreen.classList.add('hidden');
+                setTimeout(function() {
+                    splashScreen.style.display = 'none';
+                    document.body.classList.remove('splash-active');
+                    document.body.style.overflow = 'auto';
+                }, 1000);
+            }, 3000); // 3 saniye sonra kapat
+        });
+
+        // Sayfa yüklenmeden önce body'yi scroll'u engelle
+        document.body.style.overflow = 'hidden';
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        menuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', function() {
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // WhatsApp Form Handler - Otomatik Formatlama
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name')?.value || '';
+                const phone = document.getElementById('phone')?.value || '';
+                const motorMarka = document.getElementById('motorMarka')?.value || '';
+                const motorModel = document.getElementById('motorModel')?.value || '';
+                const arizaTuru = document.getElementById('arizaTuru')?.value || '';
+                const message = document.getElementById('message')?.value || '';
+                
+                // Form validasyonu
+                if (!name || !phone || !motorMarka || !arizaTuru) {
+                    alert('Lütfen zorunlu alanları doldurunuz!');
+                    return;
+                }
+                
+                const whatsappNumber = '905399305301';
+                
+                // Otomatik formatlanmış mesaj
+                let text = `🏍️ *MOTO MEST - SERVİS TALEBİ*\n\n`;
+                text += `*İsim:* ${name}\n`;
+                text += `*Telefon:* ${phone}\n\n`;
+                text += `*Motosiklet Bilgileri:*\n`;
+                text += `• Marka: ${motorMarka}\n`;
+                if (motorModel && motorModel.trim() !== '') {
+                    text += `• Model: ${motorModel}\n`;
+                }
+                text += `\n*Arıza Türü / İhtiyaç:*\n`;
+                text += `• ${arizaTuru}\n`;
+                if (message && message.trim() !== '') {
+                    text += `\n*Detaylı Açıklama:*\n${message}\n`;
+                }
+                text += `\n─────────────────\n`;
+                text += `Lütfen en kısa sürede bana dönüş yapabilir misiniz?`;
+                
+                const encodedText = encodeURIComponent(text);
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
+                
+                window.open(whatsappUrl, '_blank');
+                this.reset();
+            });
+        }
+
+        // Floating WhatsApp Button - Mesaj Modalı
+        const floatingWhatsApp = document.getElementById('floatingWhatsApp');
+        const whatsappModal = document.getElementById('whatsappModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+        const sendWhatsApp = document.getElementById('sendWhatsApp');
+        const whatsappMessage = document.getElementById('whatsappMessage');
+
+        // Modal açma
+        if (floatingWhatsApp) {
+            floatingWhatsApp.addEventListener('click', function(e) {
+                e.preventDefault();
+                whatsappModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                // Textarea'ya focus
+                setTimeout(() => {
+                    whatsappMessage.focus();
+                }, 100);
+            });
+        }
+
+        // Modal kapatma
+        function closeWhatsAppModal() {
+            whatsappModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            whatsappMessage.value = '';
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', closeWhatsAppModal);
+        }
+
+        if (cancelModal) {
+            cancelModal.addEventListener('click', closeWhatsAppModal);
+        }
+
+        // Overlay'e tıklayınca kapat
+        if (whatsappModal) {
+            const overlay = whatsappModal.querySelector('.whatsapp-modal-overlay');
+            if (overlay) {
+                overlay.addEventListener('click', closeWhatsAppModal);
+            }
+        }
+
+        // ESC tuşu ile kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && whatsappModal.classList.contains('active')) {
+                closeWhatsAppModal();
+            }
+        });
+
+        // WhatsApp gönder
+        if (sendWhatsApp) {
+            sendWhatsApp.addEventListener('click', function() {
+                const whatsappNumber = '905399305301';
+                let messageText = whatsappMessage.value.trim();
+                
+                // Eğer boş mesaj yazıldıysa varsayılan mesaj
+                if (messageText === '') {
+                    messageText = 'Merhaba, servis hizmeti hakkında bilgi almak istiyorum.';
+                }
+                
+                const encodedText = encodeURIComponent(messageText);
+                const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedText}`;
+                
+                // WhatsApp'ı yeni sekmede aç
+                window.open(whatsappUrl, '_blank');
+                
+                // Modal'ı kapat
+                closeWhatsAppModal();
+            });
+        }
+
+        // Enter tuşu ile gönder (Ctrl+Enter veya Shift+Enter)
+        if (whatsappMessage) {
+            whatsappMessage.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && (e.ctrlKey || e.shiftKey)) {
+                    e.preventDefault();
+                    sendWhatsApp.click();
+                }
+            });
+        }
+
+        // Scroll Animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Video error handling
+        const video = document.getElementById('backgroundVideo');
+        if (video) {
+            video.addEventListener('error', function() {
+                document.querySelector('.video-background').style.background = 
+                    'linear-gradient(135deg, #0a0a0a 0%, #1f1f1f 50%, #0a0a0a 100%)';
+            });
+        }
+    </script>
+</body>
+</html>
